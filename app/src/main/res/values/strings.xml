@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ChallengeChapter5</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment 1</string>
+    <string name="hello_blank_fragment2">Hello blank fragment 2</string>
+    <string name="hello_blank_fragment3">Hello blank fragment 3</string>
+    <string name="text_title_fragment_one">Bermain Suit Melawan\nSesama Pemain</string>
+    <string name="text_second_landing_title">Bermain Suit Melawan\nKomputer</string>
+    <string name="text_title_third_landing">Tuliskan namamu dibawah</string>
+    <string name="text_name_hint">Nama Anda</string>
+    <string name="text_title_main_menu">Pilih Lawanmu</string>
+</resources>

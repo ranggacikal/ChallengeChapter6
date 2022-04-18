@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.ranggacikal.challengechapter5.ui.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_to_landing"
+            app:destination="@id/landingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/landingFragment"
+        android:name="com.ranggacikal.challengechapter5.ui.LandingFragment"
+        android:label="fragment_landing"
+        tools:layout="@layout/fragment_landing" >
+        <action
+            android:id="@+id/action_to_main_menu"
+            app:destination="@id/mainMenuFragment">
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/mainMenuFragment"
+        android:name="com.ranggacikal.challengechapter5.ui.MainMenuFragment"
+        android:label="fragment_main_menu"
+        tools:layout="@layout/fragment_main_menu">
+        <argument
+            android:name="playerName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_to_game"
+            app:destination="@id/gameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.ranggacikal.challengechapter5.ui.GameFragment"
+        android:label="fragment_game"
+        tools:layout="@layout/fragment_game" >
+        <argument
+            android:name="playerNameGame"
+            app:argType="string" />
+        <argument
+            android:name="pilihanLawan"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_back_to_menu"
+            app:destination="@id/mainMenuFragment" />
+    </fragment>
+</navigation>

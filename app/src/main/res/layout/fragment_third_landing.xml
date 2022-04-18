@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_third_landing"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.landingScreen.ThirdLandingFragment">
+
+
+    <ImageView
+        android:id="@+id/img_header_third_landing"
+        android:layout_width="@dimen/img_header_third_landing_width"
+        android:layout_height="@dimen/img_header_third_landing_height"
+        android:layout_marginTop="@dimen/img_header_third_landing_margin_top"
+        android:src="@drawable/ic_landing_page_three"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title_third_landing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_title_third_landing_margin_top"
+        android:text="@string/text_title_third_landing"
+        android:textSize="@dimen/text_title_third_landing_size"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_header_third_landing" />
+
+    <EditText
+        android:id="@+id/edt_nama_pemain"
+        android:layout_width="@dimen/edit_text_third_landing_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/edit_text_third_landing_margin_start"
+        android:layout_marginTop="@dimen/edit_text_third_landing_margin_top"
+        android:layout_marginEnd="@dimen/edit_text_third_landing_margin_end"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="@string/text_name_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title_third_landing" />
+
+    <ImageView
+        android:id="@+id/img_next_third_landing"
+        android:layout_width="@dimen/image_next_third_landing_width"
+        android:layout_height="@dimen/image_next_third_landing_height"
+        android:layout_marginEnd="@dimen/image_next_third_landing_margin_end"
+        android:layout_marginBottom="@dimen/image_next_third_landing_margin_bottom"
+        android:visibility="gone"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
