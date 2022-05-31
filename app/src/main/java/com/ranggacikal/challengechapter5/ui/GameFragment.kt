@@ -7,17 +7,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import androidx.room.Room
 import com.ranggacikal.challengechapter5.databinding.FragmentGameBinding
-import com.ranggacikal.challengechapter5.ui.viewModel.GameViewModel
+import com.ranggacikal.challengechapter5.db.History
+import com.ranggacikal.challengechapter5.db.HistoryDatabase
+import com.ranggacikal.challengechapter5.ui.model.HasilValidasiPlayerData
+import com.ranggacikal.challengechapter5.ui.presenter.GamePresenter
+import com.ranggacikal.challengechapter5.ui.presenter.GameView
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
-class GameFragment : Fragment() {
+class GameFragment : Fragment(), GameView {
 
     lateinit var binding: FragmentGameBinding
     private val args: GameFragmentArgs by navArgs()
-    private lateinit var viewModel: GameViewModel
+    lateinit var presenter: GamePresenter
+    private var db: HistoryDatabase? = null
 
     var selectedPlayer: Int = 0
 
@@ -36,9 +45,11 @@ class GameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[GameViewModel::class.java]
+        presenter = GamePresenter(this)
         val pilihanLawan = args.pilihanLawan
         binding.tvPlayerNameGame.text = args.playerNameGame
+        db = HistoryDatabase.getInstance(requireContext())
+
         when (pilihanLawan) {
             "player" -> {
                 binding.tvPlayer2.text = "Player 2"
@@ -98,37 +109,7 @@ class GameFragment : Fragment() {
             binding.imgKertasCom.setBackgroundColor(Color.WHITE)
             binding.imgGuntingCom.setBackgroundColor(Color.WHITE)
             binding.tvPilihanCom.text = "Pemain 2 memilih batu"
-            viewModel.validasiHasilPlayer(selectedPlayer, 1)
-            when (viewModel.hasilValidasi()) {
-                "win" -> {
-                    viewModel.showDialogWin(
-                        args.playerNameGame, "MENANG",
-                        requireContext(), binding.root
-                    )
-                    if (viewModel.dismissViewModel()){
-                        resetDismissBatu()
-                    }
-                }
-
-                "lose" -> {
-                    viewModel.showDialogLose(
-                        args.pilihanLawan, "MENANG",
-                        requireContext(), binding.root, args.playerNameGame
-                    )
-                    if (viewModel.dismissViewModel()){
-                        resetDismissBatu()
-                    }
-                }
-                else -> {
-                    viewModel.showDialogDraw(
-                        args.playerNameGame, "SERI",
-                        requireContext(), binding.root
-                    )
-                    if (viewModel.dismissViewModel()){
-                        resetDismissBatu()
-                    }
-                }
-            }
+            presenter.validasiHasilPlayer(selectedPlayer, 1)
         }
 
         binding.imgKertasCom.setOnClickListener {
@@ -136,24 +117,7 @@ class GameFragment : Fragment() {
             binding.imgKertasCom.setBackgroundColor(Color.GRAY)
             binding.imgGuntingCom.setBackgroundColor(Color.WHITE)
             binding.tvPilihanCom.text = "Pemain 2 memilih Kertas"
-            viewModel.validasiHasilPlayer(selectedPlayer, 2)
-            when (viewModel.hasilValidasi()) {
-                "win" ->
-                    viewModel.showDialogWin(
-                        args.playerNameGame, "MENANG",
-                        requireContext(), binding.root
-                    )
-
-                "lose" ->
-                    viewModel.showDialogLose(
-                        args.pilihanLawan, "MENANG",
-                        requireContext(), binding.root, args.playerNameGame
-                    )
-                else -> viewModel.showDialogDraw(
-                    args.playerNameGame, "SERI",
-                    requireContext(), binding.root
-                )
-            }
+            presenter.validasiHasilPlayer(selectedPlayer, 2)
         }
 
         binding.imgGuntingCom.setOnClickListener {
@@ -161,24 +125,7 @@ class GameFragment : Fragment() {
             binding.imgKertasCom.setBackgroundColor(Color.WHITE)
             binding.imgGuntingCom.setBackgroundColor(Color.GRAY)
             binding.tvPilihanCom.text = "Pemain 2 memilih Gunting"
-            viewModel.validasiHasilPlayer(selectedPlayer, 3)
-            when (viewModel.hasilValidasi()) {
-                "win" ->
-                    viewModel.showDialogWin(
-                        args.playerNameGame, "MENANG",
-                        requireContext(), binding.root
-                    )
-
-                "lose" ->
-                    viewModel.showDialogLose(
-                        args.pilihanLawan, "MENANG",
-                        requireContext(), binding.root, args.playerNameGame
-                    )
-                else -> viewModel.showDialogDraw(
-                    args.playerNameGame, "SERI",
-                    requireContext(), binding.root
-                )
-            }
+            presenter.validasiHasilPlayer(selectedPlayer, 3)
         }
     }
 
@@ -201,37 +148,20 @@ class GameFragment : Fragment() {
             binding.imgGuntingCom.setBackgroundColor(Color.WHITE)
             binding.imgKertasPlayer.setBackgroundColor(Color.WHITE)
             binding.imgGuntingPlayer.setBackgroundColor(Color.WHITE)
-            viewModel.validasiHasilCom(1)
-            when (viewModel.setCom()) {
+            presenter.validasiHasilCom(1)
+            when (presenter.setCom()) {
                 1 -> {
                     binding.imgBatuCom.setBackgroundColor(Color.GRAY)
                     binding.tvPilihanCom.text = "CPU 2 memilih batu"
                 }
-                2 ->{
+                2 -> {
                     binding.imgKertasCom.setBackgroundColor(Color.GRAY)
                     binding.tvPilihanCom.text = "CPU 2 memilih kertas"
                 }
-                else ->{
+                else -> {
                     binding.imgGuntingCom.setBackgroundColor(Color.GRAY)
                     binding.tvPilihanCom.text = "CPU 2 memilih Gunting"
                 }
-            }
-            when (viewModel.hasilValidasi()) {
-                "win" ->
-                    viewModel.showDialogWin(
-                        args.playerNameGame, "MENANG",
-                        requireContext(), binding.root
-                    )
-
-                "lose" ->
-                    viewModel.showDialogLose(
-                        args.pilihanLawan, "MENANG",
-                        requireContext(), binding.root, args.playerNameGame
-                    )
-                else -> viewModel.showDialogDraw(
-                    args.playerNameGame, "SERI",
-                    requireContext(), binding.root
-                )
             }
         }
 
@@ -242,28 +172,20 @@ class GameFragment : Fragment() {
             binding.imgGuntingCom.setBackgroundColor(Color.WHITE)
             binding.imgBatuPlayer.setBackgroundColor(Color.WHITE)
             binding.imgGuntingPlayer.setBackgroundColor(Color.WHITE)
-            viewModel.validasiHasilCom(2)
-            when (viewModel.setCom()) {
-                1 -> binding.imgBatuCom.setBackgroundColor(Color.GRAY)
-                2 -> binding.imgKertasCom.setBackgroundColor(Color.GRAY)
-                else -> binding.imgGuntingCom.setBackgroundColor(Color.GRAY)
-            }
-            when (viewModel.hasilValidasi()) {
-                "win" ->
-                    viewModel.showDialogWin(
-                        args.playerNameGame, "MENANG",
-                        requireContext(), binding.root
-                    )
-
-                "lose" ->
-                    viewModel.showDialogLose(
-                        args.pilihanLawan, "MENANG",
-                        requireContext(), binding.root, args.playerNameGame
-                    )
-                else -> viewModel.showDialogDraw(
-                    args.playerNameGame, "SERI",
-                    requireContext(), binding.root
-                )
+            presenter.validasiHasilCom(2)
+            when (presenter.setCom()) {
+                1 -> {
+                    binding.imgBatuCom.setBackgroundColor(Color.GRAY)
+                    binding.tvPilihanCom.text = "CPU 2 memilih batu"
+                }
+                2 -> {
+                    binding.imgKertasCom.setBackgroundColor(Color.GRAY)
+                    binding.tvPilihanCom.text = "CPU 2 memilih kertas"
+                }
+                else -> {
+                    binding.imgGuntingCom.setBackgroundColor(Color.GRAY)
+                    binding.tvPilihanCom.text = "CPU 2 memilih Gunting"
+                }
             }
         }
 
@@ -273,28 +195,62 @@ class GameFragment : Fragment() {
             binding.imgKertasCom.setBackgroundColor(Color.WHITE)
             binding.imgBatuPlayer.setBackgroundColor(Color.WHITE)
             binding.imgKertasPlayer.setBackgroundColor(Color.WHITE)
-            viewModel.validasiHasilCom(1)
-            when (viewModel.setCom()) {
-                1 -> binding.imgBatuCom.setBackgroundColor(Color.GRAY)
-                2 -> binding.imgKertasCom.setBackgroundColor(Color.GRAY)
-                else -> binding.imgGuntingCom.setBackgroundColor(Color.GRAY)
+            presenter.validasiHasilCom(1)
+            when (presenter.setCom()) {
+                1 -> {
+                    binding.imgBatuCom.setBackgroundColor(Color.GRAY)
+                    binding.tvPilihanCom.text = "CPU 2 memilih batu"
+                }
+                2 -> {
+                    binding.imgKertasCom.setBackgroundColor(Color.GRAY)
+                    binding.tvPilihanCom.text = "CPU 2 memilih kertas"
+                }
+                else -> {
+                    binding.imgGuntingCom.setBackgroundColor(Color.GRAY)
+                    binding.tvPilihanCom.text = "CPU 2 memilih Gunting"
+                }
             }
-            when (viewModel.hasilValidasi()) {
-                "win" ->
-                    viewModel.showDialogWin(
-                        args.playerNameGame, "MENANG",
-                        requireContext(), binding.root
-                    )
+        }
+    }
 
-                "lose" ->
-                    viewModel.showDialogLose(
-                        args.pilihanLawan, "MENANG",
-                        requireContext(), binding.root, args.playerNameGame
-                    )
-                else -> viewModel.showDialogDraw(
+    override fun hasilValidasiPlayer(hasilValidasiPlayerData: HasilValidasiPlayerData) {
+        when (hasilValidasiPlayerData.hasilValidasiPlayer) {
+            "win" -> {
+                val currentDate = LocalDateTime.now()
+                presenter.showDialogWin(
+                    args.playerNameGame, "MENANG",
+                    requireContext(), binding.root
+                )
+                GlobalScope.launch {
+                    val historyPlayerWin =
+                        History(null, args.playerNameGame, "MENANG", currentDate.toString())
+                    db?.historyDao()?.insert(historyPlayerWin)
+                }
+            }
+
+            "lose" -> {
+                presenter.showDialogLose(
+                    args.pilihanLawan, "MENANG",
+                    requireContext(), binding.root, args.playerNameGame
+                )
+                val currentDate = LocalDateTime.now()
+                GlobalScope.launch {
+                    val historyPlayerLose =
+                        History(null, args.pilihanLawan, "MENANG", currentDate.toString())
+                    db?.historyDao()?.insert(historyPlayerLose)
+                }
+            }
+            else -> {
+                presenter.showDialogDraw(
                     args.playerNameGame, "SERI",
                     requireContext(), binding.root
                 )
+                val currentDate = LocalDateTime.now()
+                GlobalScope.launch {
+                    val historyPlayerDraw =
+                        History(null, args.playerNameGame, "SERI", currentDate.toString())
+                    db?.historyDao()?.insert(historyPlayerDraw)
+                }
             }
         }
     }

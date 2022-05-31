@@ -56,5 +56,10 @@ class MainMenuFragment : Fragment() {
             val action = MainMenuFragmentDirections.actionToGame(playerName, "com")
             Navigation.findNavController(binding.root).navigate(action)
         }
+
+        binding.imgLeaderBoard.setOnClickListener {
+            val actionHistory = MainMenuFragmentDirections.actionToHistory()
+            Navigation.findNavController(binding.root).navigate(actionHistory)
+        }
     }
 }

@@ -13,6 +13,8 @@ import androidx.navigation.Navigation
 import com.ranggacikal.challengechapter5.R
 import com.ranggacikal.challengechapter5.databinding.FragmentLandingBinding
 import com.ranggacikal.challengechapter5.databinding.FragmentThirdLandingBinding
+import com.ranggacikal.challengechapter5.sharedPreferences.PreferenceHelper
+import com.ranggacikal.challengechapter5.sharedPreferences.PreferenceHelper.userName
 import com.ranggacikal.challengechapter5.ui.LandingFragmentDirections
 import com.ranggacikal.challengechapter5.ui.MainMenuFragment
 
@@ -20,6 +22,8 @@ class ThirdLandingFragment : Fragment() {
 
     lateinit var binding: FragmentThirdLandingBinding
     private val bundle = Bundle()
+    val CUSTOM_PREF_NAME = "user_data"
+    lateinit var sharedPreference: PreferenceHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class ThirdLandingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPreference = PreferenceHelper
         binding.edtNamaPemain.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -59,6 +64,8 @@ class ThirdLandingFragment : Fragment() {
             val playerName = binding.edtNamaPemain.text.toString()
             val action = LandingFragmentDirections.actionToMainMenu(playerName)
             Navigation.findNavController(binding.clThirdLanding).navigate(action)
+            val prefs = sharedPreference.customPreference(requireContext(), CUSTOM_PREF_NAME)
+            prefs.userName = playerName
         }
     }
 }
